@@ -1,0 +1,23 @@
+{
+  "name":"nolobean/CoraFramework",
+  "description":"Peruvian NanoFramework",
+  "Type":"proyect",
+  "authors":[
+    {
+      "name":"Emmanuel  Barturen",
+      "email":"emmanuelbarturen@gmail.com",
+      "homepage":"http://www.emmanuelbarturen.com"
+    }
+  ],
+  "require":{
+    "php":">=5.4.0",
+    "filp/whoops": "~1.1",
+    "smarty/smarty": "~3.1"
+
+  },
+  "autoload":{
+    "psr-4":{
+      "App\\":"app/"
+    }
+  }
+}
