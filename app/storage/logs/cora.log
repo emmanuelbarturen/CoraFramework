@@ -1,0 +1,70 @@
+SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'dasda'das' for key 'nombre_UNIQUE'
+#0 /var/www/corav3/app/_core/Database.php(73): PDOStatement->execute(Array)
+#1 /var/www/corav3/app/_core/Database.php(84): Database->sendQuery('UPDATE categori...', Array)
+#2 /var/www/corav3/app/_core/Model.php(90): Database->executeScalar('UPDATE categori...', Array)
+#3 /var/www/corav3/app/controllers/AdminController.php(20): Model->save()
+#4 [internal function]: AdminController->productos()
+#5 /var/www/corav3/app/_core/App.php(46): call_user_func_array(Array, Array)
+#6 /var/www/corav3/public/index.php(5): App->__construct()
+#7 {main}
+
+SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry 'dasda'das' for key 'nombre_UNIQUE'
+#0 /var/www/corav3/app/_core/Database.php(73): PDOStatement->execute(Array)
+#1 /var/www/corav3/app/_core/Database.php(84): Database->sendQuery('UPDATE categori...', Array)
+#2 /var/www/corav3/app/_core/Model.php(93): Database->executeScalar('UPDATE categori...', Array)
+#3 /var/www/corav3/app/controllers/AdminController.php(20): Model->save()
+#4 [internal function]: AdminController->productos()
+#5 /var/www/corav3/app/_core/App.php(46): call_user_func_array(Array, Array)
+#6 /var/www/corav3/public/index.php(5): App->__construct()
+#7 {main}
+
+No se ha definido un id
+No se ha definido un id
+SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry '1sasas' for key 'nombre_UNIQUE'
+#0 /var/www/corav3/app/_core/Database.php(73): PDOStatement->execute(Array)
+#1 /var/www/corav3/app/_core/Database.php(84): Database->sendQuery('UPDATE categori...', Array)
+#2 /var/www/corav3/app/_core/Model.php(123): Database->executeScalar('UPDATE categori...', Array)
+#3 /var/www/corav3/app/controllers/AdminController.php(20): Model->update()
+#4 [internal function]: AdminController->productos()
+#5 /var/www/corav3/app/_core/App.php(46): call_user_func_array(Array, Array)
+#6 /var/www/corav3/public/index.php(5): App->__construct()
+#7 {main}
+
+Motor de Base de datos no soportado.
+exception 'PDOException' with message 'could not find driver' in /var/www/corav3/app/_core/Database.php:39
+Stack trace:
+#0 /var/www/corav3/app/_core/Database.php(39): PDO->__construct('sqlite:my/datab...')
+#1 /var/www/corav3/app/_core/Database.php(16): Database->getConnection('localhost', 'root', '', 'fioreza')
+#2 /var/www/corav3/app/_core/Database.php(25): Database->__construct('localhost', 'root', '', 'fioreza')
+#3 /var/www/corav3/app/_core/Model.php(16): Database::getInstancia()
+#4 /var/www/corav3/app/_core/Model.php(10): Model::getConnection()
+#5 /var/www/corav3/app/controllers/AdminController.php(17): Model->__construct()
+#6 [internal function]: AdminController->productos()
+#7 /var/www/corav3/app/_core/App.php(46): call_user_func_array(Array, Array)
+#8 /var/www/corav3/public/index.php(5): App->__construct()
+#9 {main}
+could not find driver
+#0 /var/www/corav3/app/_core/Database.php(39): PDO->__construct('sqlite:my/datab...')
+#1 /var/www/corav3/app/_core/Database.php(16): Database->getConnection('localhost', 'root', '', 'fioreza')
+#2 /var/www/corav3/app/_core/Database.php(25): Database->__construct('localhost', 'root', '', 'fioreza')
+#3 /var/www/corav3/app/_core/Model.php(16): Database::getInstancia()
+#4 /var/www/corav3/app/_core/Model.php(10): Model::getConnection()
+#5 /var/www/corav3/app/controllers/AdminController.php(17): Model->__construct()
+#6 [internal function]: AdminController->productos()
+#7 /var/www/corav3/app/_core/App.php(46): call_user_func_array(Array, Array)
+#8 /var/www/corav3/public/index.php(5): App->__construct()
+#9 {main}
+
+could not find driver
+#0 /var/www/corav3/app/_core/Database.php(39): PDO->__construct('sqlite:my/datab...')
+#1 /var/www/corav3/app/_core/Database.php(16): Database->getConnection('localhost', 'root', '', 'fioreza')
+#2 /var/www/corav3/app/_core/Database.php(25): Database->__construct('localhost', 'root', '', 'fioreza')
+#3 /var/www/corav3/app/_core/Model.php(16): Database::getInstancia()
+#4 /var/www/corav3/app/_core/Model.php(10): Model::getConnection()
+#5 /var/www/corav3/app/controllers/AdminController.php(17): Model->__construct()
+#6 [internal function]: AdminController->productos()
+#7 /var/www/corav3/app/_core/App.php(53): call_user_func_array(Array, Array)
+#8 /var/www/corav3/public/index.php(5): App->__construct()
+#9 {main}
+
+No se ha definido un id

@@ -1,4 +1,4 @@
-<?php namespace Core;
+<?php
 require_once 'Exception.php';
 use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
@@ -10,35 +10,45 @@ use Whoops\Handler\PrettyPageHandler;
 class App
 {
     protected $controller;
-    protected $method = 'index';
+    protected $method ;
     protected $params = [];
 
     public function __construct()
     {
-
         $this->startVars();
         $url = $this->parseUrl();
-        if (!$url) {
-            $this->controller = 'home';
-            $url[0] = $this->controller;
-        }
-
-        if (file_exists('../app/controllers/' . ucfirst($url[0]) . 'Controller.php')) {
-            $this->controller = $url[0].'Controller';
-            unset($url[0]);
-        } else {
-            throw new Exception('No existe controlador '.ucfirst($url[0]).'Controller.php oye mi querido .....programador de radio xD');
-        }
-        require_once '../app/controllers/' . ucfirst($this->controller) . '.php';
-        $objController = new $this->controller();
-        if (isset($url[1])) {
-            if (method_exists($this->controller, $url[1])) {
-                $this->method = $url[1];
-                unset($url[1]);
+        require_once '../app/controllers/HomeController.php';
+        require_once '../app/controllers/AdminController.php';
+        $objController=null;
+        if (isset($url[0])) {
+            if( $url[0]==getenv('ADM_NAME'))
+            {
+                $objController = new \AdminController();
+             if(method_exists('AdminController', str_replace('-','_',$url[1])))
+             {
+                 $this->method = isset($url[1])?str_replace('-','_',$url[1]):'index';
+                 unset($url[0]);
+                 unset($url[1]);
+             }
+             else
+                {
+                    throw new Exception('el metodo '.$this->method.'  no existe pe chicho');
+                }
+            }
+            elseif (method_exists('HomeController', str_replace('-','_',$url[0]))) {
+                $objController = new \HomeController();
+                $this->method = isset($url[0])?str_replace('-','_',$url[0]):'index';
+                unset($url[0]);
             } else {
-                throw new Exception('La funcion del controlador no existe pe chicho, ta que estas en nada ah!! xD ');
+                throw new Exception('el metodo '.$this->method.'  no existe pe chicho, ta que estas en nada ah!! xD ');
             }
         }
+        else{
+            //TODO: Comprobar que controlador y metodo existan o lanzar error
+            $objController = new \HomeController();
+            $this->method='index';
+        }
+
         $this->params = $url ? array_values($url) : [];
         call_user_func_array([$objController, $this->method], $this->params);
     }
@@ -57,19 +67,19 @@ class App
     }
 
     /**
-     * Establece las variables que se encuentren en web.config como globales para su uso en la aplicacion.
+     * Establece las variables que se encuentren en app.conf como globales para su uso en la aplicacion.
      */
     public function startVars()
     {
 
-        $conf_file = file(__DIR__ . '/../../web.config');
+        $conf_file = file(__DIR__ . '/../../app.conf');
         if (!$conf_file) {
             $whoops = new Run();
             $whoops->pushHandler(new PrettyPageHandler());
             $whoops->register();
-            throw new Exception("No se encuentra archivo web.config en la carpeta raiz pe mi querido.... mutilador de frameworks XD! ");
+            throw new Exception("No se encuentra archivo app.conf en la carpeta raiz pe mi querido.... mutilador de frameworks XD! ");
         }
-        $env_variables = array('APP_DEBUG', 'DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD','SMARTY_TIMEZONE','SMARTY_CACHE_VIEWS','SMARTY_LIFETIME_CACHE_VIEWS');
+        $env_variables = array('APP_DEBUG', 'DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD','TIMEZONE','UPLOAD_MAX_FILESIZE','POST_MAX_SIZE','ADM_NAME','DB_MOTOR');
         foreach ($conf_file as $line) {
             $l = explode("=", $line);
             if (in_array($l[0], $env_variables)) {
@@ -82,13 +92,15 @@ class App
 
     public function setConfigs()
     {
-        ini_set('date.timezone',getenv('SMARTY_TIMEZONE'));
+        ini_set('date.timezone',getenv('TIMEZONE'));
+        ini_set('post_max_size',getenv('POST_MAX_SIZE'));
+        ini_set('upload_max_filesize',getenv('UPLOAD_MAX_FILESIZE'));
+        ini_set('default_charset', 'UTF-8');
         if (getenv('APP_DEBUG') == 'true') {
             $whoops = new Run();
             $whoops->pushHandler(new PrettyPageHandler());
             $whoops->register();
             ini_set('display_errors', 1);
-            ini_set('default_charset', 'UTF-8');
         } else {
             ini_set('display_errors', 0);
         }

@@ -3,30 +3,19 @@
 class Controller {
 
     function __construct()
-    {   include_once '../app/util/Helpers.php';
-        foreach (glob('../app/models/*.php') as $filename)
-        {
-            include $filename;
-        }
+    {
+        include_once '../app/util/File.php';
+
     }
     public function view($view,$arr_variables=null)
     {
 
-        if (file_exists('../app/views/'.$view.'.tpl')) {
-            $smarty = new SmartyBC();
-            $smarty->setCompileDir(dirname( __FILE__ ) . '/../resources/views/smarty/compiled/' );
-            $smarty->setCacheDir(dirname( __FILE__ ) . '/../resources/views/smarty/cache/');
-            $smarty->setTemplateDir(dirname( __FILE__ ).'/../views/');
-            $smarty->caching=getenv('SMARTY_CACHE_VIEWS');
-            $smarty->cache_lifetime=getenv('SMARTY_LIFETIME_CACHE_VIEWS');
+        if (file_exists('../app/views/'.$view.'.php')) {
             if(is_array($arr_variables))
             {
-                foreach($arr_variables as $key=>$val)
-                {
-                    $smarty->assign($key, $val);
-                }
+                extract($arr_variables);
             }
-            $smarty->display($view.'.tpl');
+            include_once (dirname(dirname(__FILE__)).'/views/'.$view.'.php');
         }
         else
         {
