@@ -1,31 +1,80 @@
 <?php
 use Core\Exception;
-class Model
-{
+class Model{
     private static $database;
     protected static $table;
-    function __construct()
-    {
+    protected static $fillable = [];
+    function __construct(){
         self::getConnection();
     }
-
-    private static function getConnection()
-    {
+    private static function getConnection(){
         require_once('Database.php');
         self::$database = Database::getInstancia();
     }
 
-    public static function find($id)
-    {
+    public static function find($id){
         $results = self::where('id', $id);
-        return $results[0];
+        return isset($results[0])?$results[0]:null;
     }
+    public static function lists($id,$value){
+        $list = null;
+        self::getConnection();
+        $query = "SELECT $id as id,$value as value FROM " . static::$table;
+        $results = self::$database->execute($query, null);
+        if ($results) {
+             foreach ($results as  $values) {
+                $list[$values['id']] = $values['value'];
+            }
+        }
+        else
+            $list=[];
 
-    public static function where($field, $value)
-    {
+        return $list;
+    }
+    public static function where($field, $value,$add_query = ''){
         $objs = null;
         self::getConnection();
-        $query = "SELECT * FROM " . static::$table . " WHERE " . $field . " = ?";
+        $query = "SELECT * FROM " . static::$table . " WHERE " . $field . " = ? ".$add_query;
+        $results = self::$database->execute($query, array($value));
+
+        if ($results) {
+            $class = get_called_class();
+            foreach ($results as $index => $cols) {
+                $obj = new $class();
+                foreach ($cols as $key => $val) {
+                    $obj->$key = $val;
+                }
+                $objs[] = $obj;
+            }
+        }
+        else
+            $objs=[];
+
+        return $objs;
+    }
+    public static function query($query){
+        $objs = null;
+        self::getConnection();
+        $results = self::$database->execute($query);
+        if ($results) {
+            $class = get_called_class();
+            foreach ($results as $index => $cols) {
+                $obj = new $class();
+                foreach ($cols as $key => $val) {
+                    $obj->$key = $val;
+                }
+                $objs[] = $obj;
+            }
+        }
+        else
+            $objs=[];
+
+        return $objs;
+    }
+    public static function search($field, $value){
+        $objs = null;
+        self::getConnection();
+        $query = "SELECT * FROM " . static::$table . " WHERE " . $field . " like CONCAT('%',?,'%')";
         $results = self::$database->execute($query, array($value));
         if ($results) {
             $class = get_called_class();
@@ -37,16 +86,17 @@ class Model
                 $objs[] = $obj;
             }
         }
+        else
+            $objs=[];
+
         return $objs;
     }
-
-    public static function all($order = null)
-    {
+    public static function all($order = null){
         $objs = null;
         self::getConnection();
         $query = "SELECT * FROM " . static::$table;
         if ($order) {
-            $query .= $order;
+            $query .= ' Order By '.$order;
         }
         $results = self::$database->execute($query, null);
         if ($results) {
@@ -59,13 +109,35 @@ class Model
                 $objs[] = $obj;
             }
         }
-
+        else
+            $objs=[];
         return $objs;
     }
+    private function filter_values($vals){
+        $arr_vals=[];
+        if(is_array(get_object_vars($this))) {
+            foreach(get_object_vars($this) as $key=>$val1) {
+                $arr_vals[$key]=$val1;
+            }
+        }
+        if(is_array($vals)) {
+            foreach($vals as $key2=>$val2) {
+                $arr_vals[$key2]=$val2;
+            }
+        }
 
-    public function save()
-    {
-        $values = get_object_vars($this);
+        if(count(static::$fillable)>0) {
+            foreach ($arr_vals as $key=>$val) {
+                if (!in_array($key, static::$fillable)) {
+                    unset($arr_vals[$key]);
+                }
+            }
+        }
+        return $arr_vals;
+    }
+
+    public function save($vals = null){
+        $values = $this->filter_values($vals);
         $filtered = null;
         foreach ($values as $key => $value) {
             if ($value !== null && $value !== '' && strpos($key, 'obj_') === false && $key !== 'id') {
@@ -75,10 +147,10 @@ class Model
                 $filtered[$key] = $value;
             }
         }
+        
         $columns = array_keys($filtered);
 
         if (isset($values['id'])) {
-
             $columns = join(" = ?, ", $columns);
             $columns .= ' = ?';
             $query = "UPDATE " . static::$table . " SET $columns WHERE id =" . $values['id'];
@@ -97,9 +169,9 @@ class Model
             return false;
         }
     }
-    public function update()
+    public function update($vals=null)
     {
-        $values = get_object_vars($this);
+        $values = $this->filter_values($vals);
         $filtered = null;
         foreach ($values as $key => $value) {
             if ($value !== null && $value !== '' && strpos($key, 'obj_') === false && $key !== 'id') {
@@ -230,5 +302,10 @@ class Model
         $_paginacion['rango'] = $paginas;
         dd($_paginacion);
         return $result;
+    }
+    public function relation($table,$foreign_id,$id = 'id'){
+        static::$table =$table;
+        $result =  static::where($id,$this->$foreign_id);
+        return $result[0];
     }
 }

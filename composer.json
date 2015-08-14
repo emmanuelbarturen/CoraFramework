@@ -1,17 +1,19 @@
 {
   "name":"nolobean/CoraFramework",
-  "description":"Peruvian NanoFramework",
+  "description":"Proyecto de Framework con miras a ser un CMS",
   "Type":"proyect",
   "authors":[
     {
-      "name":"Emmanuel  Barturen",
+      "name":"Emmanuel Cervera Barturen",
       "email":"emmanuelbarturen@gmail.com",
       "homepage":"http://www.emmanuelbarturen.com"
     }
   ],
   "require":{
     "php":">=5.4.0",
-    "filp/whoops": "~1.1"
+    "filp/whoops": "~1.1",
+    "philo/laravel-blade": "2.*",
+    "phpmailer/phpmailer": "~5.2"
 
   },
   "autoload":{

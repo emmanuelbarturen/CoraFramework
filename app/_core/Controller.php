@@ -1,25 +1,19 @@
 <?php
+include_once '../app/_core/Redirect.php';
+use Philo\Blade\Blade;
 
 class Controller {
-
-    function __construct()
-    {
+    function __construct(){
+        //TODO: llamar a toda la carpeta util
         include_once '../app/util/File.php';
-
+        include_once '../app/util/Helper.php';
+        include_once '../app/util/Form.php';
     }
-    public function view($view,$arr_variables=null)
-    {
 
-        if (file_exists('../app/views/'.$view.'.php')) {
-            if(is_array($arr_variables))
-            {
-                extract($arr_variables);
-            }
-            include_once (dirname(dirname(__FILE__)).'/views/'.$view.'.php');
-        }
-        else
-        {
-            throw new \Core\Exception("Oe compare como vas a llamar a la vista: $view si no existe, palta ps...");
-        }
+    public function view($view,$arr_var=[]){
+        $views = app_path(). 'views';
+        $cache = app_path() . 'storage/cache';
+        $blade = new Blade($views, $cache);
+        return $blade->view()->make($view,$arr_var)->render();
     }
 }

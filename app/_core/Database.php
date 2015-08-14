@@ -35,7 +35,7 @@ class Database  {
                         self::$pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
                         break;
                     case 'sqlite': # SQLite Database
-                        self::$pdo = new PDO("sqlite:my/database/path/database.db");
+                        self::$pdo = new PDO("sqlite:cora_database.db");
                         break;
                     case 'sqlserver': # MS SQLServer y Sybase con PDO_DBLIB
                         self::$pdo = new PDO("mssql:host=$host;dbname=$dbname, $user, $pass");
@@ -100,7 +100,6 @@ class Database  {
     public function execute($q, $params = null) {
 
         $this->sendQuery($q, $params);
-       //TODO: validar que sea un recurso
         if (is_object(static::$stm)) {
             $arr = array();
             while ($row = static::$stm->fetch(PDO::FETCH_ASSOC)) {
@@ -108,7 +107,6 @@ class Database  {
             }
             return $arr;
         }
-        //TODO: de lo contrario devuelve la cantidad de filas afectadas
         return static::$stm->rowCount() ? false : true;
     }
     public function getInsertedID() {

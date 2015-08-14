@@ -10,6 +10,7 @@
  */
 function dd($var)
 {
+    ob_clean();
     echo '<pre>';
     if(is_array($var))
         print_r($var);
@@ -32,11 +33,20 @@ function url($url = ''){
 /**
  * Crea una url basada en la accion del controlador que se pase por parametro con el formato NameController@actionName
  * @param $action
- * @return int
+ * @param string $param
+ * @return string
  */
 function action($action,$param=''){
-    $arg = explode('@',$action);
-    return url(strtolower(str_replace('Controller','',$arg[0])).'/'.strtolower($arg[1]).'/'.$param);
+
+    $arg = explode('@',str_replace('-','_',$action));
+    if(strtolower($arg[0])!='maincontroller') {
+        /*if(!method_exists($arg[0],$arg[1]))
+            throw new \Core\Exception('La funcion '.$arg[1].' no esta definida en '.$arg[0]);*/
+        return url('admin/'.strtolower(str_replace('Controller','',$arg[0])).'/'.strtolower($arg[1]).'/'.$param);
+    }
+    if(!method_exists('MainController',$arg[1]))
+        throw new \Core\Exception('La funcion '.$arg[1].' no esta definida en MainController');
+    return url(strtolower($arg[1]).'/'.$param);
 }
 
 /**
@@ -71,7 +81,20 @@ function asset($path = ''){
     return  $actual_link.$path;
 }
 
+/**
+ * Obtener mensaje flash
+ * @param $name
+ * @return mixed
+ */
+function get_msg($name){
+    return Session::getflash($name);
+}
 
-function incluir($path){
-    include app_path().'views/'.$path;
+/**
+ * Verificar si una variable de session existe
+ * @param $name
+ * @return bool
+ */
+function has_msg($name){
+    return Session::has($name);
 }
