@@ -1,1 +1,1 @@
-directorio para el cache de las vistas
+directorio para el cache de las vistasggi

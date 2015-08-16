@@ -18,7 +18,7 @@
 <body>
     <header class="header">
         <div class="top clearfix">
-            <a href="http://infinibyte.pe/" target="_blank">infinibyte.pe</a> - Administrador web
+            <a href="http://infinibyte.pe/" target="_blank">emmanuelbarturen.com</a> - Administrador web
             <div class="right-icons">
                 <a href="#" class="share"><i class="md md-more-vert"></i></a>
             </div> 
@@ -32,14 +32,11 @@
             </div> 
         </div> 
         <div class="bottom clearfix">
-            <div class="title"><a href="{{action('AdminController@index')}}">Sociedad Comercial & Consultores SAC</a> - @section('area') area @show</div>
+            <div class="title"><a href="{{action('AdminController@index')}}">Adminsitrador</a> - @section('area') area @show</div>
             <a href="#" class="responsive-menu-open">Menu<i class="fa fa-bars"></i></a>
             <nav class="main-nav">
                 <ul class="list-unstyled">
                     <li class="active"><a href="{{action('AdminController@index')}}">Home</a></li>
-                    <li><a href="{{action('EventosController@index')}}">Eventos</a></li>
-                    <li><a href="{{action('CategoriasController@index')}}">Categorias</a></li>
-                    <li><a href="{{action('ContactosController@postulantes')}}">Postulantes</a></li>
                     <li><a href="{{action('ContactosController@mensajes')}}">Contactos</a></li>
                     <li><a href="{{action('AdminController@change_password')}}">Configuraci&oacute;n</a></li>
                 </ul>
