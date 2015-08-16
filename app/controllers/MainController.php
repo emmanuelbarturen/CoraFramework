@@ -58,6 +58,15 @@ class MainController extends Controller{
     public function home(){
         return $this->view('index');
     }
+    public function save(){
+        $img =  new File('archivo',public_path().'/img/',['jpg','png']);
+        if(!$img->upload()){
+            echo $img->msg;
+            die();
+        }
+        File::create_thumb($img->name,public_path().'/img/',public_path().'/img/thumbs/',100);
+        echo $img->url;
+    }
 
 
 }

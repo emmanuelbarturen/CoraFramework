@@ -1,50 +1,99 @@
 <?php namespace App\Util;
 
+use Core\Exception;
+
 class File{
     public $name =null;
     public $url =null;
     public $extension=null;
     private $resource=null;
     private $path=null;
-    public function __construct($inputname,$path = ''){
+    public $msg = null;
+    private $maxsize = null;
+    private $extensionsaccepted = [];
+
+    public function __construct($inputname,$path, $extensionsaccepted = [], $maxize = 2097152){
         $this->resource = $_FILES[$inputname];
         $this->path = $path;
+        $this->maxsize = $maxize;
+        $this->extensionsaccepted= $extensionsaccepted;
     }
 
     public function upload(){
-        if(is_array($this->resource['name'])){
-            for($i=0;$i<count($this->resource['name']);$i++) {
-                if($this->resource['name'][$i]!='')
-                    $this->storage($this->resource['name'][$i],$this->resource['tmp_name'][$i],$this->resource['size'][$i],$this->resource['error'][$i]);
-            }
+
+        if($this->resource['error']){
+            $this->msg = $this->resource['error'];
+            return false;
         }
-        else {
-            $this->storage($this->resource['name'],$this->resource['tmp_name'],$this->resource['size'],$this->resource['error']);
-            $this->name = $this->name[0];
-            $this->url = $this->url[0];
+        if(!$this->checkmaxSize())
+        {
+            $this->msg = "El archivo supera el maximo permitido";
+            return false;
         }
+        if(!$this->checkExtension())
+        {
+            $this->msg = "Este tipo de arhivo no se encuentra permitido. Solo arhivos con las extensiones: ".implode(',',$this->extensionsaccepted);
+            return false;
+        }
+        return $this->storage($this->resource['name'],$this->resource['tmp_name']);
     }
-    private function storage($name,$temp_name,$size ,$error){
+    public static function create_thumb($name, $path_to_image_directory,$path_to_thumbs_directory, $final_width_of_image)
+    {
+        if(!is_dir($path_to_image_directory)){
+            throw new Exception('No existe el directorio '.$path_to_image_directory);
+        }
+        if(!is_dir($path_to_thumbs_directory)){
+            throw new Exception('No existe el directorio '.$path_to_thumbs_directory);
+        }
+
+        if(preg_match('/[.](jpg)$/', $name)) {
+            $im = imagecreatefromjpeg($path_to_image_directory . $name);
+        } else if (preg_match('/[.](gif)$/', $name)) {
+            $im = imagecreatefromgif($path_to_image_directory . $name);
+        } else if (preg_match('/[.](png)$/', $name)) {
+            $im = imagecreatefrompng($path_to_image_directory . $name);
+        }
+        else{
+            throw new Exception('Solo se pueden hacer thumbs de imagenes jpg, gif y png');
+        }
+
+        $ox = imagesx($im);
+        $oy = imagesy($im);
+
+        $nx = $final_width_of_image;
+        $ny = floor($oy * ($final_width_of_image / $ox));
+
+        $nm = imagecreatetruecolor($nx, $ny);
+
+        if(!imagecopyresized($nm, $im, 0,0,0,0,$nx,$ny,$ox,$oy))return false;
+        if(!imagejpeg($nm, $path_to_thumbs_directory . $name))return false;
+
+        return true;
+    }
+    private function storage($name,$temp_name){
         $today = date("YmdHis");
         $new_file_name = $today.'_'.$name;
-        move_uploaded_file($temp_name,public_path().'/'.$this->path.$new_file_name);
-        $this->name[]=$new_file_name;
-        $this->url[] = $this->path.$new_file_name;
+        if(move_uploaded_file($temp_name,$this->path.$new_file_name)){
+            $this->name=$new_file_name;
+            $this->url = $this->path.$new_file_name;
+            return true;
+        }else{
+            $this->msg = "No se pudo cargar el archivo";
+            return false;
+        }
     }
 
     public static function hasFile($nombre){
         return isset($_FILES[$nombre]) && count($_FILES[$nombre])>0;
     }
 
-    public static function maxSize($name,$size = 2097152){
-        $file = $_FILES[$name]['size'];
-        $size = $size;
-        return $file<$size;
+    private function checkmaxSize(){
+        return $this->resource['size']<$this->maxsize;
     }
-    public static function extensionAcceptable($name,$arrayExtension){
-        $filename = $_FILES[$name]['name'];
+    private  function checkExtension(){
+        $filename = $this->resource['name'];
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        return in_array($ext,$arrayExtension);
+        return in_array($ext,$this->extensionsaccepted);
     }
     public static function download($path ,$disposition = 'inline', $filename = null){
         header('Content-type: application/pdf');
@@ -60,17 +109,9 @@ class File{
         exit();
     }
     public static function delete($path){
-        if(is_array($path)) {
-            foreach($path as $one) {
-                self::delete($one);
-            }
-        }
-        else {
-            $complete_path =public_path().'/'.$path;
-            if(! is_dir($complete_path)) {
-                if(file_exists($complete_path))
-                    unlink($complete_path);
-            }
+        if(! is_dir($path)) {
+            if(file_exists($path))
+                unlink($path);
         }
     }
 }
