@@ -4,10 +4,7 @@ use Philo\Blade\Blade;
 
 class Controller {
     function __construct(){
-        //TODO: llamar a toda la carpeta util
-        include_once '../app/util/File.php';
-        include_once '../app/util/Helper.php';
-        include_once '../app/util/Form.php';
+        foreach (glob('../app/util/*.php') as $filename){include_once $filename;}
     }
 
     public function view($view,$arr_var=[]){

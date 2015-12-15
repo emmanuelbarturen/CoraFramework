@@ -11,7 +11,7 @@ class App
     public function __construct()
     {
         Session::garbage_collector();
-        $this->startVars(); 
+        $this->startVars();
         $this->url = $this->parseUrl();
         if (isset($this->url[0])) {
             $controller = $this->getController();
@@ -80,7 +80,6 @@ class App
                 $method = 'login';
             }
         }
-
         print call_user_func_array([$controller, $method], $params);
     }
 
@@ -114,7 +113,8 @@ class App
         foreach ($conf_file as $line) {
             $l = explode("=", $line);
             if (in_array($l[0], $env_variables)) {
-                $value = trim(array_pop(explode("=", $line)));
+                $value = explode("=", $line);
+                $value = trim(array_pop($value));
                 putenv("$l[0]=$value");
             }
         }

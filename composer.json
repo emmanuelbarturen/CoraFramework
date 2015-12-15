@@ -1,6 +1,6 @@
 {
   "name":"nolobean/CoraFramework",
-  "description":"Proyecto de Framework con miras a ser un CMS",
+  "description":"Micro Framework for very simple proyects",
   "Type":"proyect",
   "authors":[
     {
@@ -10,7 +10,7 @@
     }
   ],
   "require":{
-    "php":">=5.4.0",
+    "php":">=5.5.0",
     "filp/whoops": "~1.1",
     "philo/laravel-blade": "2.*",
     "phpmailer/phpmailer": "~5.2"
