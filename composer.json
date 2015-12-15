@@ -14,7 +14,6 @@
     "filp/whoops": "~1.1",
     "philo/laravel-blade": "2.*",
     "phpmailer/phpmailer": "~5.2"
-
   },
   "autoload":{
     "psr-4":{
