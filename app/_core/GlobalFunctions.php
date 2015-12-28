@@ -50,11 +50,11 @@ function action($action,$params_a=null){
         /*if(!method_exists($arg[0],$arg[1]))
             throw new \Core\Exception('La funcion '.$arg[1].' no esta definida en '.$arg[0]);*/
 
-        return url('admin/'.strtolower(str_replace('Controller','',$arg[0])).'/'.strtolower($arg[1]).'/'.$params);
+        return url('admin/'.strtolower(str_replace('Controller','',$arg[0])).'/'.str_replace('_','-',strtolower($arg[1])).'/'.$params);
     }
     if(!method_exists('MainController',$arg[1]))
         throw new \Core\Exception('La funcion '.$arg[1].' no esta definida en MainController');
-    return url(strtolower($arg[1]).'/'.$params);
+    return url(str_replace('_','-',strtolower($arg[1])).'/'.$params);
 }
 
 /**
@@ -105,4 +105,14 @@ function get_msg($name){
  */
 function has_msg($name){
     return Session::has($name);
+}
+/**
+ * Obtiene la ruta completa del url
+ * @return bool
+ */
+function getFullUrl(){
+    $s = empty($_SERVER["HTTPS"]) ? '' : ($_SERVER["HTTPS"] == "on") ? "s" : "";
+    $protocol = substr(strtolower($_SERVER["SERVER_PROTOCOL"]), 0, strpos(strtolower($_SERVER["SERVER_PROTOCOL"]), "/")).$s;
+    $port = ($_SERVER["SERVER_PORT"] == "80") ? "" : (":".$_SERVER["SERVER_PORT"]);
+    return $protocol."://".$_SERVER['SERVER_NAME'].$port.$_SERVER['REQUEST_URI'];
 }
